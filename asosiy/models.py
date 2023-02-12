@@ -5,3 +5,6 @@ class Reja(models.Model):
     vaqt = models.TimeField()
     batafsil = models.TextField()
     holat = models.BooleanField()
+
+    def __str__(self):
+        return self.sarlavha

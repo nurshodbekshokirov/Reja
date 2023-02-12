@@ -58,22 +58,25 @@
   <div class="row">
 
     <div class="col-md-8">
+      {% for i in reja %}
       <div class="card">
-        <center><b>Title of the todo</b></center>
+        <center><b>{{i.sarlavha}}</b></center>
         <hr/>
-        Todo time
+        {{i.vaqt}}
         <hr/>
-        Todo description
+        {{i.batafsil}}
         <hr/>
-        Todo status
+        {{i.holat}}
         <br />
-        <button class="btn btn-primary" style="float: right;"><span class="glyphicon glyphicon-trash"></span><a href="#">O'chirish</a></button>
+        <button class="btn btn-primary" style="float: right;"><span class="glyphicon glyphicon-trash"></span><a href="/reja/{{i.id}}/">O'chirish</a></button>
       </div>
+      {% endfor %}
     </div>
     <div class="col-md-1"> </div>
     <div class="col-md-3" >
       <div  class="submit_form">
-      <form action="#" >
+      <form action="/" method="post" >{% csrf_token %}
+        {{forma.as_p}}
 
         <center>
         <button type="submit" class="btn btn-default">Topshirish</button>
