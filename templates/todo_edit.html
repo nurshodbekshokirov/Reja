@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tahrirlash</title>
+</head>
+<body>
+  <h1> Tanlangan rejani tahrirlash imkoni </h1>
+  <form method="post">{% csrf_token %}
+
+      <label>Sarlavha</label>
+      <input type="text" name="s" value="{{reja.sarlavha}}"><br><br>
+      <label>vaqti</label>
+      <input type="time" name="v" value="{{reja.vaqt}}"><br><br>
+      <label>Batafsil</label>
+      <input type="text" name="b" value="{{reja.batafsil}}"><br><br>
+      <label>Bajarildi</label>
+        {% if reja.holat %}
+        <input type="checkbox" name="ba" checked>
+        {% else %}
+        <input type="checkbox" name="ba" >
+        {%endif%}
+
+
+      <button type="submit">Yangilash</button>
+
+  </form>
+
+</body>
+</html>
