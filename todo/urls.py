@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', reja),
     path('reja/<int:son>/', reja_ochir),
+
 ]
