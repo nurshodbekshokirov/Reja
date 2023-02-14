@@ -10,6 +10,7 @@ urlpatterns = [
     path('reja_edit/<int:son>/', reja_update),
     path('', loginview),
     path('logout/', logoutview),
+    path('register/', register),
 
 
 ]

@@ -22,27 +22,33 @@ def reja(request):
 
 def reja_ochir(request, son):
     rejaa = Reja.objects.get(id=son)
-    rejaa.delete()
-    return redirect('todo/')
-def reja_update(request, son):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            if request.POST.get('ba') == 'on':
 
-                qiymat = True
-            else:
-                qiymat = False
-            Reja.objects.filter(id=son).update(
-                sarlavha = request.POST.get('s'),
-                vaqt = request.POST.get('v'),
-                batafsil = request.POST.get('b'),
-                holat = qiymat
-            )
-            return redirect('todo/')
-        data = {
-            'reja':Reja.objects.get(id=son)
-        }
-        return render(request, 'todo_edit.html', data)
+    if rejaa.foydalanuvchi == request.user:
+
+        rejaa.delete()
+        return redirect('/todo/')
+def reja_update(request, son):
+    plan = Reja.objects.get(id=son).foydalanuvchi
+    if plan == request.user:
+
+        if request.user.is_authenticated:
+            if request.method == 'POST':
+                if request.POST.get('ba') == 'on':
+
+                    qiymat = True
+                else:
+                    qiymat = False
+                Reja.objects.filter(id=son).update(
+                    sarlavha = request.POST.get('s'),
+                    vaqt = request.POST.get('v'),
+                    batafsil = request.POST.get('b'),
+                    holat = qiymat
+                )
+                return redirect('/todo/')
+            data = {
+                'reja':Reja.objects.get(id=son)
+            }
+            return render(request, 'todo_edit.html', data)
 
 
 
@@ -60,6 +66,16 @@ def loginview(request):
 def logoutview(request):
     logout(request)
     return redirect('/')
+
+def register(request):
+    if request.method == "POST" and request.POST.get('p') == request.POST.get('cp'):
+        User.objects.create_user(
+            username = request.POST.get('l'),
+            password =  request.POST.get('p')
+
+        )
+        return redirect('/')
+    return render(request, 'register.html')
 
 
 
