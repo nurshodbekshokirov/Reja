@@ -1,11 +1,24 @@
 from django.shortcuts import render, redirect
+from django.views import View
+
 from .models import *
 from .forms import *
 from django.contrib.auth import authenticate, login,logout
 
-def reja(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
+class Rejaview(View):
+
+    def get(self,request):
+        if request.user.is_authenticated:
+            data = {
+                'reja': Reja.objects.filter(foydalanuvchi=request.user),
+                'forma': RejaForm
+            }
+            return render(request, 'todo (2).html', data)
+        return redirect('/')
+
+    def post(self, request):
+        if request.user.is_authenticated:
+
 
             form = RejaForm(request.POST)
             if form.is_valid():
@@ -13,25 +26,29 @@ def reja(request):
                 animal.foydalanuvchi = request.user
                 animal.save()
                 return redirect('/todo/')
-        data = {
-            'reja': Reja.objects.filter(foydalanuvchi=request.user),
-            'forma':RejaForm
-        }
-        return render(request, 'todo (2).html', data)
-    return redirect('/')
+        return redirect('/')
 
-def reja_ochir(request, son):
-    rejaa = Reja.objects.get(id=son)
 
-    if rejaa.foydalanuvchi == request.user:
 
-        rejaa.delete()
-        return redirect('/todo/')
-def reja_update(request, son):
-    plan = Reja.objects.get(id=son).foydalanuvchi
-    if plan == request.user:
+class Reja_ochir(View):
+    def get(self,request, son):
+        rejaa = Reja.objects.get(id=son)
 
-        if request.user.is_authenticated:
+        if rejaa.foydalanuvchi == request.user:
+
+            rejaa.delete()
+            return redirect('/todo/')
+class Reja_update(View):
+    def get(self,request, son):
+        plan = Reja.objects.get(id=son).foydalanuvchi
+        if plan == request.user:
+
+            if request.user.is_authenticated:
+                data = {
+                    'reja': Reja.objects.get(id=son)
+                }
+                return render(request, 'todo_edit.html', data)
+    def post(self, request, son):
             if request.method == 'POST':
                 if request.POST.get('ba') == 'on':
 
@@ -45,15 +62,14 @@ def reja_update(request, son):
                     holat = qiymat
                 )
                 return redirect('/todo/')
-            data = {
-                'reja':Reja.objects.get(id=son)
-            }
-            return render(request, 'todo_edit.html', data)
 
 
 
-def loginview(request):
-    if request.method == 'POST':
+
+class Loginview(View):
+    def get(self, request):
+        return render(request, 'login.html')
+    def post(self, request):
         user = authenticate(username = request.POST.get('l'),
                      password = request.POST.get('p'))
         if user is None:
@@ -61,21 +77,28 @@ def loginview(request):
         login(request, user)
         return redirect('/todo/')
 
-    return render(request, 'login.html')
 
-def logoutview(request):
-    logout(request)
-    return redirect('/')
 
-def register(request):
-    if request.method == "POST" and request.POST.get('p') == request.POST.get('cp'):
-        User.objects.create_user(
-            username = request.POST.get('l'),
-            password =  request.POST.get('p')
-
-        )
+class Logoutview(View):
+    def get(self, request):
+        logout(request)
         return redirect('/')
-    return render(request, 'register.html')
+
+class Register(View):
+    def get(self, request):
+        return render(request, 'register.html')
+    def post(self, request):
+
+
+        if request.POST.get('p') == request.POST.get('cp'):
+
+            User.objects.create_user(
+                username = request.POST.get('l'),
+                password =  request.POST.get('p')
+
+            )
+            return redirect('/')
+
 
 
 
