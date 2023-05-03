@@ -10,7 +10,7 @@ class Rejaview(View):
     def get(self,request):
         if request.user.is_authenticated:
             data = {
-                'reja': Reja.objects.filter(foydalanuvchi=request.user),
+                'reja': Reja.objects.filter(talaba__user=request.user),
                 'forma': RejaForm
             }
             return render(request, 'todo (2).html', data)
@@ -22,9 +22,8 @@ class Rejaview(View):
 
             form = RejaForm(request.POST)
             if form.is_valid():
-                animal = form.save(commit=False)
-                animal.foydalanuvchi = request.user
-                animal.save()
+                form.save()
+
                 return redirect('/todo/')
         return redirect('/')
 
@@ -34,14 +33,23 @@ class Reja_ochir(View):
     def get(self,request, son):
         rejaa = Reja.objects.get(id=son)
 
-        if rejaa.foydalanuvchi == request.user:
+        if rejaa.talaba.user == request.user:
 
             rejaa.delete()
             return redirect('/todo/')
 class Reja_update(View):
+    # def get(self, request, son):
+    #     plan = Reja.objects.get(id=son)
+    #     if plan.talaba.user == request.user:
+    #
+    #         if request.user.is_authenticated:
+    #             data = {
+    #                 'forma': RejaForm(instance=plan),
+    #             }
+    #             return render(request, 'todo_edit.html', data)
     def get(self,request, son):
-        plan = Reja.objects.get(id=son).foydalanuvchi
-        if plan == request.user:
+        plan = Reja.objects.get(id=son)
+        if plan.talaba.user == request.user:
 
             if request.user.is_authenticated:
                 data = {
@@ -49,19 +57,21 @@ class Reja_update(View):
                 }
                 return render(request, 'todo_edit.html', data)
     def post(self, request, son):
-            if request.method == 'POST':
-                if request.POST.get('ba') == 'on':
 
-                    qiymat = True
-                else:
-                    qiymat = False
-                Reja.objects.filter(id=son).update(
-                    sarlavha = request.POST.get('s'),
-                    vaqt = request.POST.get('v'),
-                    batafsil = request.POST.get('b'),
-                    holat = qiymat
-                )
-                return redirect('/todo/')
+
+            if request.POST.get('ba') == 'on':
+
+                qiymat = True
+            else:
+                qiymat = False
+            Reja.objects.filter(id=son).update(
+                sarlavha = request.POST.get('s'),
+                vaqt = request.POST.get('v'),
+                batafsil = request.POST.get('b'),
+                holat = qiymat
+
+            )
+            return redirect('/todo/')
 
 
 
@@ -92,10 +102,18 @@ class Register(View):
 
         if request.POST.get('p') == request.POST.get('cp'):
 
-            User.objects.create_user(
+            user = User.objects.create_user(
                 username = request.POST.get('l'),
                 password =  request.POST.get('p')
 
+            )
+            ism_f = request.POST.get('i')
+            Talaba.objects.create(
+                ism= ism_f[:ism_f.find(' ')],
+                familyasi = ism_f[ism_f.find('')+1:],
+                st_raqam = request.POST.get('st_r'),
+                kurs = request.POST.get('k'),
+                user = user
             )
             return redirect('/')
 
@@ -105,4 +123,6 @@ class Register(View):
 
 
 
-# Create your views here.
+
+
+
